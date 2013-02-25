@@ -107,21 +107,26 @@ document.addEventListener('DOMContentLoaded', function () {
 				document.getElementById('loader').style.display = 'none';
 				if (xhr.status == 200) {
 					var res = JSON.parse(xhr.responseText);
-					var stat = res.report.item[res.report.item.length - 1];
-					var statDate = new Date(stat.v);
 
-					document.getElementById('stat').innerHTML =
-						'<strong>Статистика за ' + statDate.getDate() + '.' + (1 + statDate.getMonth()) + '.' + (1900 + statDate.getYear()) + ':</strong><br />' +
-						parseInt(stat.c[0]).toLocaleString() + ' ' + numstr(stat.c[0], 'посетитель', 'посетителя', 'посетителей') + '<br />' +
-						parseInt(stat.c[1]).toLocaleString() + ' ' + numstr(stat.c[1], 'визит', 'визита', 'визитов') + '<br />' +
-						parseInt(stat.c[2]).toLocaleString() + ' ' + numstr(stat.c[2], 'просмотр', 'просмотра', 'просмотров');
-					document.getElementById('stat').style.display = 'block';
+					document.getElementById('title').innerHTML = res.title;
+					document.getElementById('title').style.display = 'block';
+
+					if (res.has_stat) {
+						var stat = res.report.item[res.report.item.length - 1];
+						var statDate = new Date(stat.v);
+						document.getElementById('stat').innerHTML =
+							'<strong>Статистика за ' + statDate.getDate() + '.' + (1 + statDate.getMonth()) + '.' + (1900 + statDate.getYear()) + ':</strong><br />' +
+							parseInt(stat.c[0]).toLocaleString() + ' ' + numstr(stat.c[0], 'посетитель', 'посетителя', 'посетителей') + '<br />' +
+							parseInt(stat.c[1]).toLocaleString() + ' ' + numstr(stat.c[1], 'визит', 'визита', 'визитов') + '<br />' +
+							parseInt(stat.c[2]).toLocaleString() + ' ' + numstr(stat.c[2], 'просмотр', 'просмотра', 'просмотров');
+						document.getElementById('stat').style.display = 'block';
+
+						drawGraph(res.report.item, document.getElementById('graph'));
+						document.getElementById('graph').style.display = 'block';
+					}
 
 					document.getElementById('rating').innerHTML =
 						'<a href="http://rating.openstat.ru/site/' + cntId + '/" target="_blank">Перейти на страницу рейтинга</a>';
-
-					drawGraph(res.report.item, document.getElementById('graph'));
-					document.getElementById('graph').style.display = 'block';
 
 					xhr.onreadystatechange = function () {
 						if (xhr.readyState == 4 && xhr.status == 200) {
